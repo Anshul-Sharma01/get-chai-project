@@ -81,10 +81,10 @@ const Navbar = () => {
                             </li>
                             <li>
                                 <Link
-                                    href="#"
+                                    href={`/${session.user.name}`}
                                     className="block px-4 py-2 hover:bg-gray-100 text-black dark:hover:bg-gray-600 hover:text-white"
                                 >
-                                    Earnings
+                                    Your Page
                                 </Link>
                             </li>
                             <li>

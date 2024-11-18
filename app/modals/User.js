@@ -8,12 +8,11 @@ const userSchema = new Schema({
     },
     name : {
         type : String,
-        required : true
     },
     username : {
         type : String
     },
-    profilepic : {
+    avatar : {
         type : String
     },
     coverpic : {
@@ -24,9 +23,9 @@ const userSchema = new Schema({
 })
 
 
-const User = model("User", userSchema);
 
-export default mongoose.models.User || User;
+
+export default mongoose.models.User || model("User", userSchema);;
 
 
 
