@@ -6,7 +6,7 @@ const page = async({ params }) => {
     const { username } = await params;
     return (
         <>
-            <PaymentPage username={params.username}/>
+            <PaymentPage username={username}/>
         </>
     )
 }

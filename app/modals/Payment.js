@@ -10,7 +10,7 @@ const paymentSchema = new Schema({
         type : String,
         required : true
     },
-    old : {
+    oid : {
         type : String,
         required : true
     },

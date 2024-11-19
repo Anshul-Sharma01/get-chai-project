@@ -1,20 +1,40 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Razorpay from 'razorpay'
 import Script from 'next/script'
+import { initiate } from '@/actions/useractions'
+import { useSession } from 'next-auth/react'
 
 const PaymentPage = ({ username }) => {
 
-    const pay = (amount, orderId) => {
+    // const { data : session } = useSession();
+
+    const [ paymentform, setPaymentForm ] = useState({
+        name : "",
+        message : "",
+        amount : ""
+    });
+    const handleChange = (e) => {
+        setPaymentForm({ ...paymentform, [e.target.name] : e.target.value });
+    }
+
+
+    // console.log("Razorpay Key:", process.env.NEXT_PUBLIC_KEY_ID);
+    const pay = async (amount) => {
+        let a = await initiate(amount, username, paymentform);
+        // console.log("KEY _ ID  :", process.env.NEXT_PUBLIC_KEY_ID);
+        let orderId = a.id;
+        console.log("key_id : ", process.env.NEXT_PUBLIC_KEY_ID);
+
         var options = {
-            "key": processe.env.KEY_ID, 
+            "key_id": process.env.NEXT_PUBLIC_KEY_ID, 
             "amount": amount,
             "currency": "INR",
             "name": "Get - Me - A - Chai",
             "description": "Test Transaction",
             "image": "https://example.com/your_logo",
             "order_id": orderId, 
-            "callback_url": `${processe.env.URL}/api/razorpay`,
+            "callback_url": `${process.env.NEXT_PUBLIC_URL}/api/razorpay`,
             "prefill": {
                 "name": "Gaurav Kumar",
                 "email": "gaurav.kumar@example.com",
@@ -27,10 +47,10 @@ const PaymentPage = ({ username }) => {
                 "color": "#3399cc"
             }
         }
+        var rzp = new window.Razorpay(options);
+        rzp.open();
     }
 
-    var rzp1 = new Razorpay(options);
-    rzp1.open();
     
 
     return (
@@ -91,9 +111,9 @@ const PaymentPage = ({ username }) => {
                     <div className="makePayment w-1/2 bg-slate-900 rounded-lg text-white p-8 flex-col shadow-lg">
                         <h2 className='text-2xl font-bold mb-5'>Make a Payment</h2>
                         <div className='flex gap-4 flex-col'>
-                            <input type="text" className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Name' />
-                            <input type="text" className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Message' />
-                            <input type="number" className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Amount' />
+                            <input type="text" value={paymentform.name} onChange={handleChange} name='name' className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Name' />
+                            <input type="text" name="message" value={paymentform.message} onChange={handleChange} className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Message' />
+                            <input type="number" name="amount" value={paymentform.amount} onChange={handleChange} className='w-full p-4 rounded-lg bg-slate-800 text-white' placeholder='Enter Amount' />
                             <button 
                                 type="button" 
                                 className="bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-lg py-2.5 text-center mt-4 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300"
@@ -102,9 +122,9 @@ const PaymentPage = ({ username }) => {
                             </button>
                         </div>
                         <div className='flex gap-4 mt-5'>
-                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all'>Pay $10</button>
-                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all'>Pay $20</button>
-                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all'>Pay $30</button>
+                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all' onClick={() => pay(1000)}>Pay ₹10</button>
+                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all' onClick={() => pay(2000)}>Pay ₹20</button>
+                            <button className='bg-slate-800 p-4 rounded-lg hover:bg-slate-700 transition-all' onClick={() => pay(3000)}>Pay ₹30</button>
                         </div>
                     </div>
                 </div>
