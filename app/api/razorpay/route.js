@@ -10,6 +10,8 @@ export const POST = async (req) => {
     await connectDB();
     let body = await req.formData();
     body = Object.fromEntries(body);
+
+    
     
 
     // Check if razorpay orderid is present on server
@@ -18,7 +20,10 @@ export const POST = async (req) => {
         return NextResponse.json({ success : false, message : "Order Id not found"});
     }
 
-    let xx = validatePaymentVerification({ "order_id" : body.razorpay_order_id, "payment_id" : body.razorpay_payment_id}, body.razorpay_signature, process.env.NEXT_PUBLIC_KEY_SECRET);
+    let xx = validatePaymentVerification({ 
+        "order_id" : body.razorpay_order_id,
+        "payment_id" : body.razorpay_payment_id
+    }, body.razorpay_signature, process.env.NEXT_PUBLIC_KEY_SECRET);
 
     if(xx){
         const updatedPayment = await Payment.findOneAndUpdate({

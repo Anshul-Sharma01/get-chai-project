@@ -17,6 +17,12 @@ const userSchema = new Schema({
     },
     coverpic : {
         type : String
+    },
+    razorpayId : {
+        type : String
+    },
+    razorpaySecret : {
+        type : String
     }
 }, {
     timestamps : true

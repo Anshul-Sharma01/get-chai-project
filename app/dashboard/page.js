@@ -1,26 +1,29 @@
 "use client";
-import React, { useEffect, useState } from 'react'
-import { useSession, signIn, signOut } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { fetchuser, updateProfile } from '@/actions/useractions';
 
 const Dashboard = () => {
     const { data: session } = useSession();
     const router = useRouter();
-
-    useEffect(() => {
-        if(!session){
-            router.push("/login");
-        }
-    }, [session, router])
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         username: '',
-        profilePicture: '',
-        coverPicture: '',
+        avatar: '',
+        coverpic: '',
         razorpayId: '',
         razorpaySecret: ''
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const getData = async () => {
+        if (session?.user?.name) {
+            const u = await fetchuser(session.user.name);
+            setFormData(u);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,17 +33,40 @@ const Dashboard = () => {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // You can send formData to the server or handle the submission here
-        console.log('Form Submitted', formData);
+    const handleSubmit = async (e) => {
+        // e.preventDefault();
+        // if (isSubmitting) return;
+        // setIsSubmitting(true);
+        // if (!formData.name || !formData.email || !formData.username) {
+        //     alert("Please fill in all required fields.");
+        //     setIsSubmitting(false);
+        //     return;
+        // }
+        // try {
+        //     await updateProfile(formData, session.user.name);
+        //     alert("Profile Updated");
+        // } catch (error) {
+        //     alert("Error updating profile");
+        // } finally {
+        //     setIsSubmitting(false);
+        // }
+        let a = await updateProfile(e, session.user.name);
+        alert("Profile Updated");
     };
+
+    useEffect(() => {
+        if (!session) {
+            router.push("/login");
+            return;
+        }
+        getData();
+    }, [session, router]);
 
     return (
         <div className="dashboard-container max-w-4xl mx-auto p-8">
             <h1 className="text-4xl font-bold text-center mb-8">Welcome to Your Dashboard</h1>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="input-group">
                         <label htmlFor="name" className="block text-lg font-semibold">Name</label>
@@ -82,12 +108,12 @@ const Dashboard = () => {
                     </div>
 
                     <div className="input-group">
-                        <label htmlFor="profilePicture" className="block text-lg font-semibold">Profile Picture URL</label>
+                        <label htmlFor="avatar" className="block text-lg font-semibold">Profile Picture URL</label>
                         <input
                             type="url"
-                            id="profilePicture"
-                            name="profilePicture"
-                            value={formData.profilePicture}
+                            id="avatar"
+                            name="avatar"
+                            value={formData.avatar}
                             onChange={handleChange}
                             className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
                             placeholder="Enter profile picture URL"
@@ -95,12 +121,12 @@ const Dashboard = () => {
                     </div>
 
                     <div className="input-group">
-                        <label htmlFor="coverPicture" className="block text-lg font-semibold">Cover Picture URL</label>
+                        <label htmlFor="coverpic" className="block text-lg font-semibold">Cover Picture URL</label>
                         <input
                             type="url"
-                            id="coverPicture"
-                            name="coverPicture"
-                            value={formData.coverPicture}
+                            id="coverpic"
+                            name="coverpic"
+                            value={formData.coverpic}
                             onChange={handleChange}
                             className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
                             placeholder="Enter cover picture URL"
@@ -137,9 +163,10 @@ const Dashboard = () => {
                 <div className="text-center mt-8">
                     <button
                         type="submit"
+                        disabled={isSubmitting}
                         className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-gradient-to-l focus:ring-4 focus:ring-blue-300 focus:outline-none"
                     >
-                        Submit
+                        {isSubmitting ? "Updating..." : "Submit"}
                     </button>
                 </div>
             </form>
