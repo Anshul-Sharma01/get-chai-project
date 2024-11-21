@@ -7,39 +7,46 @@ import connectDB from "@/app/db/connectDb"
 import User from "@/app/modals/User"
 
 export const initiate = async (amount, to_username, paymentform) => {
-    await connectDB()
-    // fetch the secret of the user who is getting the payment 
-    let user = await User.findOne({
-        username: to_username
-    })
-    const secret = user?.razorpaySecret
+    await connectDB();
 
-    var instance = new Razorpay({ 
-        key_id: user?.razorpayId, 
-        key_secret: secret
-    })
+    let user = await User.findOne({ username: to_username });
+    const secret = user?.razorpaySecret;
+    const key_id = user?.razorpayId;
 
-
-
-    let options = {
-        amount: Number.parseInt(amount) , 
-        currency: "INR",
+    if (!key_id || !secret) {
+        throw new Error("Razorpay credentials are missing");
     }
 
-    let x = await instance.orders.create(options)
-
-    // create a payment object which shows a pending payment in the database
-    await Payment.create({
-        oid: x.id,
-        amount: amount,
-        to_user: to_username,
-        name: paymentform.name,
-        message: paymentform.message,
+    var instance = new Razorpay({
+        key_id: key_id,
+        key_secret: secret,
     });
 
-    return x
+    let options = {
+        amount: Number.parseInt(amount), 
+        currency: "INR",
+    };
 
-}
+    try {
+        console.log("Options for Razorpay order creation:", options);
+        let x = await instance.orders.create(options);
+        console.log("Order created successfully:", x);
+
+        await Payment.create({
+            oid: x.id,
+            amount: amount,
+            to_user: to_username,
+            name: paymentform.name,
+            message: paymentform.message,
+        });
+
+        return x;
+    } catch (error) {
+        console.error("Error creating Razorpay order:", error);
+        throw error;
+    }
+};
+
 
 
 
@@ -82,6 +89,7 @@ export const fetchPayments = async (username) => {
 export const updateProfile = async(data, oldUsername) => {
     await connectDB();
     let nData = Object.fromEntries(data);
+    console.log("Data : ",nData);
     if(oldUsername !== nData.username){
         let u = await User.findOne({ username : nData.username });
         if(u){
@@ -89,7 +97,13 @@ export const updateProfile = async(data, oldUsername) => {
                 error : "Username already exists"
             }
         }
+        const res = await User.updateOne({ email : nData.email }, nData);
+        console.log("Updation : ", res);
+
+        await Payment.updateMany({to_user : oldUsername }, {to_user : nData.username});
+    }else{
+        const res = await User.updateOne({email : nData.email}, nData);
+        console.log("Updation data : ", res);
     }
 
-    await User.updateOne({ email : nData.email }, nData);
 }

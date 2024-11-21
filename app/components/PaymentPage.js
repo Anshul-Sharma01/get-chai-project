@@ -4,6 +4,10 @@ import Razorpay from 'razorpay'
 import Script from 'next/script'
 import { fetchPayments, fetchuser, initiate } from '@/actions/useractions'
 import { useSession } from 'next-auth/react'
+import toast, { Toaster } from 'react-hot-toast';
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+
 
 const PaymentPage = ({ username }) => {
 
@@ -14,12 +18,20 @@ const PaymentPage = ({ username }) => {
         message : "",
         amount : ""
     });
+    const router = useRouter();
     
     const [currentUser, setCurrentUser] = useState({});
     const [payments, setPayments] = useState([]);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         getData();
+    }, [])
+    useEffect(() => {
+        if(searchParams.get("paymentdone") == "true"){
+            toast.success("Payment has been completed !!");
+            router.push(`/${username}`);
+        }
     }, [])
 
 
@@ -94,10 +106,10 @@ const PaymentPage = ({ username }) => {
                     @{username}
                 </div>
                 <div className='text-slate-400 mt-1 text-xl'>
-                    Creating animes for free
+                    Let's help {username} get a chai
                 </div>
                 <div className='text-slate-400 mt-2 text-lg'>
-                    9,719 members . 82 posts . $15,450/release
+                    {payments.length} Payments.₹{payments.reduce((a, b) => a + b.amount, 0) / 100} raised
                 </div>
                 <div className='payment w-[80%] flex gap-8 mt-16'>
                     <div className="supporters w-1/2 bg-slate-900 p-8 rounded-lg shadow-lg text-white">
@@ -131,7 +143,8 @@ const PaymentPage = ({ username }) => {
                             <button 
                             onClick={() => pay(Number.parseInt(paymentform.amount)*100)}
                                 type="button" 
-                                className="bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-lg py-2.5 text-center mt-4 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300"
+                                className="bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-lg py-2.5 text-center mt-4 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 disabled:from-slate-600 disabled:cursor-not-allowed"
+                                disabled={paymentform?.name.length < 3 || paymentform?.message.length < 4 || paymentform.amount.length < 1}
                             >
                                 Pay
                             </button>
@@ -144,6 +157,7 @@ const PaymentPage = ({ username }) => {
                     </div>
                 </div>
             </div>
+            <Toaster/>
         </>
     )
 }

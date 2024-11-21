@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { fetchuser, updateProfile } from '@/actions/useractions';
+import {toast, Toaster } from 'react-hot-toast';
 
 const Dashboard = () => {
     const { data: session } = useSession();
@@ -50,8 +51,9 @@ const Dashboard = () => {
         // } finally {
         //     setIsSubmitting(false);
         // }
+        // console.log("Username : ", session.user.name);
         let a = await updateProfile(e, session.user.name);
-        alert("Profile Updated");
+        toast.success("Profile updated !!");
     };
 
     useEffect(() => {
@@ -89,7 +91,7 @@ const Dashboard = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+                            className=" w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
                             placeholder="Enter your email"
                         />
                     </div>
@@ -170,6 +172,7 @@ const Dashboard = () => {
                     </button>
                 </div>
             </form>
+            <Toaster/>
         </div>
     );
 };

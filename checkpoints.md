@@ -1,0 +1,2 @@
+--Create a about page
+--Add metadata for each page
