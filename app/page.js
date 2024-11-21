@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -18,12 +19,12 @@ export default function Home() {
           A crowdfunding platform for creators. Get funded by your followers while sipping your tea
         </p>
         <div className="flex gap-4 mt-6">
-          <button className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-lg px-6 py-3 shadow-md hover:shadow-lg transition duration-200">
+          <Link href={"/login"} className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-lg px-6 py-3 shadow-md hover:shadow-lg transition duration-200">
             Start now
-          </button>
-          <button className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-lg px-6 py-3 shadow-md hover:shadow-lg transition duration-200">
+          </Link>
+          <Link href={"/about"} className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-lg px-6 py-3 shadow-md hover:shadow-lg transition duration-200">
             Read more
-          </button>
+          </Link>
         </div>
       </div>
 

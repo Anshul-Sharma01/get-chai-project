@@ -22,9 +22,7 @@ const Navbar = () => {
             <li className="transition-all duration-300 hover:bg-blue-700 px-4 py-2 rounded-lg cursor-pointer">
                 <Link href="/about">About</Link>
             </li>
-            <li className="transition-all duration-300 hover:bg-blue-700 px-4 py-2 rounded-lg cursor-pointer">
-                <Link href="/projects">Projects</Link>
-            </li>
+
 
             {session ? (
             <>
@@ -69,14 +67,6 @@ const Navbar = () => {
                                     className="block px-4 py-2 hover:bg-gray-100 text-black dark:hover:bg-gray-600 hover:text-white"
                                 >
                                     Dashboard
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="#"
-                                    className="block px-4 py-2 hover:bg-gray-100 text-black dark:hover:bg-gray-600 hover:text-white"
-                                >
-                                    Settings
                                 </Link>
                             </li>
                             <li>
